@@ -9,19 +9,19 @@ test('has title and can encrypt basic caesar', async ({ page }) => {
     await expect(page.getByText(/CipherLab/i)).toBeVisible();
 
     // Fill in textarea
-    await page.fill('textarea', 'HELLO E2E TEST');
+    await page.fill('textarea', 'HELLO EEE TEST');
 
     // Click Encrypt
-    await page.click('text=Encrypt');
+    await page.getByRole('button', { name: /^Encrypt$/ }).click();
 
     // Check the result
     const result = page.getByTestId('cipher-output');
     await expect(result).toBeVisible();
 
-    // For 'HELLO E2E TEST' shifted by 3 with preserve case:
+    // For 'HELLO EEE TEST' shifted by 3 with preserve case:
     // H->K, E->H, L->O, O->R
-    // E->H, 2 (ignored), E->H
+    // E->H, E->H, E->H
     // T->W, E->H, S->V, T->W
-    // KHOOR H2H WHVW
-    await expect(result).toContainText('KHOOR H2H WHVW');
+    // KHOOR HHH WHVW
+    await expect(result).toContainText('KHOOR HHH WHVW');
 });

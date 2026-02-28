@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { BaseCipherUI } from './BaseCipherUI';
 import { hillEncrypt, hillDecrypt } from '@cipherlab/shared';
 import type { HillOptions } from '@cipherlab/shared';
@@ -10,7 +10,7 @@ export function HillView() {
         <BaseCipherUI
             cipherId="hill"
             name="Hill Cipher"
-            defaultOptions={{ keyMatrix: defaultMatrix, fillerChar: 'X' }}
+            defaultOptions={{ keyMatrix: defaultMatrix }}
             clientEncrypt={(pt, opts) => hillEncrypt(pt, opts as HillOptions)}
             clientDecrypt={(ct, opts) => hillDecrypt(ct, opts as HillOptions)}
             renderOptions={(options, setOptions) => {
@@ -36,7 +36,7 @@ export function HillView() {
                                 min="2" max="6"
                                 value={n}
                                 onChange={e => updateMatrixSize(parseInt(e.target.value) || 2)}
-                                className="w-16 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                                className="w-16 p-2 rounded border border-purple-200 bg-white/50 focus:ring-2 focus:ring-purple-400 outline-none transition-colors"
                             />
                         </div>
 
@@ -49,7 +49,7 @@ export function HillView() {
                                         type="number"
                                         value={cell}
                                         onChange={e => updateCell(r, c, parseInt(e.target.value) || 0)}
-                                        className="w-12 h-12 text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 font-mono text-gray-900 dark:text-gray-100"
+                                        className="w-12 h-12 text-center rounded border border-purple-200 bg-white/50 focus:ring-2 focus:ring-purple-400 outline-none transition-colors font-mono text-gray-900"
                                     />
                                 )))}
                             </div>

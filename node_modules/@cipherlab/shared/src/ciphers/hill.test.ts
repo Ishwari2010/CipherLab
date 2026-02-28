@@ -41,7 +41,7 @@ describe('Hill Cipher', () => {
 
     it('pads plaintext if length is not a multiple of block size', () => {
         const pt = 'TESTING'; // length 7
-        const encrypted = hillEncrypt(pt, { keyMatrix: testKey3x3, fillerChar: 'X' });
+        const encrypted = hillEncrypt(pt, { keyMatrix: testKey3x3 });
         expect(encrypted.ciphertext.length).toBe(9); // padded to 9
 
         const decrypted = hillDecrypt(encrypted.ciphertext, { keyMatrix: testKey3x3 });

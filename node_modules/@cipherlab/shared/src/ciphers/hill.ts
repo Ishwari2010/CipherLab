@@ -3,11 +3,11 @@ import { Matrix, determinant, mod, gcd, invertMatrixMod26, multiplyMatrixAndVect
 
 export interface HillOptions {
     keyMatrix: Matrix;
-    fillerChar?: string; // default 'X'
 }
 
 export function hillEncrypt(plaintext: string, options: HillOptions): CipherResult {
-    const { keyMatrix, fillerChar = 'X' } = options;
+    const { keyMatrix } = options;
+    const fillerChar = 'X';
     const steps: string[] = [];
 
     // Validate matrix

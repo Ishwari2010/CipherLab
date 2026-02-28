@@ -12,20 +12,21 @@ describe('Columnar Transposition Cipher', () => {
         // E
 
         // Order: A(4), B(2), E(1), R(4 wait, index 3), S(5), Z(0)
-        // A: EVLN
-        // B: ACDT
-        // E: ESEA
-        // R: ROFO
-        // S: DEEC
+        const pt = 'WEAREDISCOVEREDFLEEATONCEXXXXX';
+        const result = columnarEncrypt('WEAREDISCOVEREDFLEEATONCE', { keyword: 'ZEBRAS' });
+        // Expected padding: Z E B R A S (6)
+        // Pt len = 25. Pad = 5. -> WEAREDISCOVEREDFLEEATONCEXXXXX
+        // A(4), B(2), E(1), R(3), S(5), Z(0)
+        // A: EVLNX
+        // B: ACDTX
+        // E: ESEAX
+        // R: ROFOX
+        // S: DEECX
         // Z: WIREE
-        // Total: EVLNACDTESEAROFODEECWIREE
-
-        const pt = 'WEAREDISCOVEREDFLEEATONCE';
-        const result = columnarEncrypt(pt, { keyword: 'ZEBRAS' });
-        expect(result.ciphertext).toBe('EVLNACDTESEAROFODEECWIREE');
+        expect(result.ciphertext).toBe('EVLNXACDTXESEAXROFOXDEECXWIREE');
 
         const dec = columnarDecrypt(result.ciphertext, { keyword: 'ZEBRAS' });
-        expect(dec.plaintext).toBe(pt);
+        expect(dec.plaintext).toBe('WEAREDISCOVEREDFLEEATONCEXXXXX');
     });
 
     it('handles duplicate keyword characters (stable sort)', () => {
@@ -39,22 +40,38 @@ describe('Columnar Transposition Cipher', () => {
         // A(0), E(4), L(3), P(1), P(2) -> indices: 0, 4, 3, 1, 2
         // S E C R E
         // T
-        // 0 (A): ST
-        // 4 (E): E
-        // 3 (L): R
-        // 1 (P): E
-        // 2 (P): C
-        // Expected: STEREC
-        // STEREC -> wait, reading order is 0, 4, 3, 1, 2
-        expect(result.ciphertext).toBe('STEREC');
+        // S E C R E
+        // T X X X X
+        // A(0): ST
+        // E(4): EX
+        // L(3): RX
+        // P(1): EX
+        // P(2): CX
+        // Expected: STEXRXEXCX
+        expect(result.ciphertext).toBe('STEXRXEXCX');
 
         const dec = columnarDecrypt(result.ciphertext, { keyword: 'APPLE' });
-        expect(dec.plaintext).toBe(pt);
+        expect(dec.plaintext).toBe('SECRETXXXX');
+    });
+
+    it('handles user zebra requirement', () => {
+        // Z E B R A (5)
+        // m e e t m
+        // e a t o n
+        // pt: meetmeaton (10)
+        // Order: A(4), B(2), E(1), R(3), Z(0)
+        // A: mn
+        // B: et
+        // E: ea
+        // R: to
+        // Z: me
+        const result = columnarEncrypt('meetmeaton', { keyword: 'ZEBRA' });
+        expect(result.ciphertext).toBe('mneteatome'); // len 10
     });
 
     it('handles double transposition', () => {
-        const pt = 'THISISATEST';
-        const encrypted = columnarEncrypt(pt, { keyword: 'KEY', doubleTransposition: true });
+        const pt = 'THISISATESTX'; // pad to multiple of 3
+        const encrypted = columnarEncrypt('THISISATEST', { keyword: 'KEY', doubleTransposition: true });
         const decrypted = columnarDecrypt(encrypted.ciphertext, { keyword: 'KEY', doubleTransposition: true });
         expect(decrypted.plaintext).toBe(pt);
     });

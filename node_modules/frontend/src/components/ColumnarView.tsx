@@ -1,5 +1,6 @@
 import React from 'react';
 import { BaseCipherUI } from './BaseCipherUI';
+import { ToggleOption } from './ToggleOption';
 import { columnarEncrypt, columnarDecrypt } from '@cipherlab/shared';
 import type { ColumnarOptions } from '@cipherlab/shared';
 
@@ -8,7 +9,7 @@ export function ColumnarView() {
         <BaseCipherUI
             cipherId="columnar"
             name="Columnar Transposition"
-            defaultOptions={{ keyword: 'CIPHER', doubleTransposition: false, fillerChar: '' }}
+            defaultOptions={{ keyword: 'CIPHER', doubleTransposition: false, fillerChar: 'X' }}
             clientEncrypt={(pt, opts) => columnarEncrypt(pt, opts as ColumnarOptions)}
             clientDecrypt={(ct, opts) => columnarDecrypt(ct, opts as ColumnarOptions)}
             renderOptions={(options, setOptions) => (
@@ -19,7 +20,7 @@ export function ColumnarView() {
                             type="text"
                             value={options.keyword}
                             onChange={e => setOptions({ ...options, keyword: e.target.value.toUpperCase() })}
-                            className="w-32 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 uppercase"
+                            className="w-32 p-2 rounded border border-purple-200 bg-white/50 focus:ring-2 focus:ring-purple-400 outline-none transition-colors uppercase placeholder-purple-300"
                             placeholder="e.g. SECRET"
                         />
                     </div>
@@ -30,16 +31,16 @@ export function ColumnarView() {
                             maxLength={1}
                             value={options.fillerChar}
                             onChange={e => setOptions({ ...options, fillerChar: e.target.value.toUpperCase() })}
-                            className="w-16 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-center uppercase"
+                            className="w-16 p-2 rounded border border-purple-200 bg-white/50 focus:ring-2 focus:ring-purple-400 outline-none transition-colors text-center uppercase"
                         />
                     </div>
-                    <div className="flex items-center space-x-2 pt-4">
-                        <input
-                            type="checkbox"
+                    <div className="flex flex-col space-y-3 sm:pt-1">
+                        <ToggleOption
+                            label="Double Transposition"
                             checked={options.doubleTransposition}
-                            onChange={e => setOptions({ ...options, doubleTransposition: e.target.checked })}
+                            onChange={checked => setOptions({ ...options, doubleTransposition: checked })}
+                            tooltip="Applies the transposition a second time using the same key."
                         />
-                        <span className="text-sm">Double Transposition</span>
                     </div>
                 </div>
             )}
@@ -58,15 +59,15 @@ export function ColumnarView() {
                 });
 
                 return (
-                    <div className="mt-4 p-4 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-x-auto w-fit">
-                        <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Columnar Grid (First Pass)</h4>
+                    <div className="mt-4 p-4 rounded-md border border-purple-200 bg-white/50 overflow-x-auto w-fit">
+                        <h4 className="text-xs text-purple-600 uppercase tracking-wider mb-2 font-semibold">Columnar Grid (First Pass)</h4>
                         <div className="flex flex-col">
-                            <div className="flex space-x-2 mb-1 border-b pb-1 dark:border-gray-700 font-bold text-purple-600 dark:text-purple-400">
+                            <div className="flex space-x-2 mb-1 border-b pb-1 border-purple-100 font-bold text-purple-800">
                                 {keyword.split('').map((c: string, i: number) => (
                                     <div key={i} className="w-6 text-center">{c}</div>
                                 ))}
                             </div>
-                            <div className="flex space-x-2 mb-2 border-b pb-1 dark:border-gray-700 text-xs text-gray-500">
+                            <div className="flex space-x-2 mb-2 border-b pb-1 border-purple-100 text-xs text-purple-500">
                                 {displayOrder.map((o: number, i: number) => (
                                     <div key={i} className="w-6 text-center">{o}</div>
                                 ))}
@@ -74,7 +75,7 @@ export function ColumnarView() {
                             {grid.map((row: string[], r: number) => (
                                 <div key={r} className="flex space-x-2 mb-1 font-mono">
                                     {row.map((char: string, c: number) => (
-                                        <div key={c} className="w-6 text-center">{char || '-'}</div>
+                                        <div key={c} className="w-6 text-center">{char || 'X'}</div>
                                     ))}
                                 </div>
                             ))}

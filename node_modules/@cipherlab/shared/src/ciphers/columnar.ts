@@ -3,7 +3,7 @@ import { CipherResult } from '../types';
 export interface ColumnarOptions {
     keyword: string;
     doubleTransposition?: boolean; // default false
-    fillerChar?: string; // default '' (irregular grid if none provided)
+    fillerChar?: string; // default 'X'
 }
 
 function getColumnOrder(keyword: string): number[] {
@@ -20,7 +20,7 @@ function getColumnOrder(keyword: string): number[] {
     return chars.map(c => c.originalIndex);
 }
 
-function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: string, steps: string[]): { ciphertext: string, grid: string[][] } {
+function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: string = 'X', steps: string[]): { ciphertext: string, grid: string[][] } {
     const numCols = keyword.length;
     if (numCols === 0) return { ciphertext: plaintext, grid: [] };
 
@@ -29,10 +29,11 @@ function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: s
 
     let text = plaintext;
     const remainder = text.length % numCols;
-    if (fillerChar && remainder !== 0) {
+    if (remainder !== 0) {
         const padCount = numCols - remainder;
-        text += fillerChar.repeat(padCount);
-        steps.push(`Padded with ${padCount} filler characters '${fillerChar}'.`);
+        const actualFiller = fillerChar || 'X';
+        text += actualFiller.repeat(padCount);
+        steps.push(`Padded with ${padCount} filler characters '${actualFiller}'.`);
     }
 
     const numRows = Math.ceil(text.length / numCols);
@@ -100,7 +101,7 @@ function columnarDecryptSingle(ciphertext: string, keyword: string, steps: strin
 }
 
 export function columnarEncrypt(plaintext: string, options: ColumnarOptions): CipherResult {
-    const { keyword, doubleTransposition = false, fillerChar = '' } = options;
+    const { keyword, doubleTransposition = false, fillerChar = 'X' } = options;
     const steps: string[] = [];
 
     let { ciphertext, grid } = columnarEncryptSingle(plaintext, keyword, fillerChar, steps);
