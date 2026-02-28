@@ -32,62 +32,88 @@ function App() {
   ];
 
   return (
-    <div className={`min-h-screen w-full transition-colors duration-200 ${theme === 'dark' ? 'dark text-white bg-gray-900' : 'bg-gray-50 text-gray-900'}`}>
-      <div className="container mx-auto p-4 md:p-8">
-        <header className="flex justify-between items-center mb-8 border-b pb-4 dark:border-gray-800">
+    <div className={`min-h-screen w-full transition-colors duration-200 flex flex-col ${theme === 'dark' ? 'dark text-white bg-gray-900' : 'bg-gray-50 text-gray-900'}`}>
+
+      {/* Sticky Top Navbar */}
+      <header className="sticky top-0 z-30 w-full backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 bg-white/95 dark:bg-gray-900/95 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-200">
+        <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">C</span>
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-lg">C</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+              <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                 CipherLab
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Educational Cryptography Toolkit</p>
             </div>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition shadow-sm"
-          >
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
-        </header>
 
-        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <aside className="lg:col-span-1 rounded-xl bg-white shadow-sm dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 h-fit">
-            <h2 className="text-sm uppercase tracking-wider font-bold mb-4 text-gray-500 dark:text-gray-400">Available Ciphers</h2>
-            <ul className="space-y-1">
-              {tabs.map(tab => (
-                <li
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`p-3 cursor-pointer rounded-lg font-medium transition ${activeTab === tab.id ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'}`}
-                >
-                  {tab.label}
-                </li>
-              ))}
-            </ul>
+          <div className="flex items-center space-x-4">
+            <span className="hidden sm:inline-block text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide">
+              Educational Cryptography Toolkit
+            </span>
+            <div className="h-4 w-px bg-gray-300 dark:bg-gray-700 mx-2 hidden sm:block"></div>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
+          </div>
+        </div>
+      </header>
 
-            <div className="mt-8 pt-4 border-t dark:border-gray-700">
-              <h2 className="text-sm uppercase tracking-wider font-bold mb-4 text-gray-500 dark:text-gray-400">Analysis Tools</h2>
-              <button className="w-full text-left p-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300 transition">
-                Auto-Detect Cipher
-              </button>
-              <button className="w-full text-left p-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300 transition">
-                Frequency Analysis
-              </button>
+      {/* Main Content Area */}
+      <div className="container mx-auto px-4 md:px-8 py-8 flex-1 flex flex-col lg:flex-row gap-8">
+
+        {/* Left Sidebar */}
+        <aside className="w-full lg:w-64 shrink-0">
+          <div className="sticky top-24 space-y-8">
+            <div>
+              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-gray-500 dark:text-gray-400 ml-2">Available Ciphers</h2>
+              <nav className="space-y-1">
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg font-medium transition duration-150 flex items-center justify-between
+                      ${activeTab === tab.id
+                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-gray-200'
+                      }`}
+                  >
+                    {tab.label}
+                    {activeTab === tab.id && <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></span>}
+                  </button>
+                ))}
+              </nav>
             </div>
-          </aside>
 
-          <section className="lg:col-span-4">
-            {activeTab === 'caesar' && <CaesarView />}
-            {activeTab === 'vigenere' && <VigenereView />}
-            {activeTab === 'hill' && <HillView />}
-            {activeTab === 'playfair' && <PlayfairView />}
-            {activeTab === 'railfence' && <RailFenceView />}
-            {activeTab === 'columnar' && <ColumnarView />}
-          </section>
+            <div>
+              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-gray-500 dark:text-gray-400 ml-2 border-t border-gray-200 dark:border-gray-800 pt-6">Analysis Tools</h2>
+              <nav className="space-y-1 block opacity-50 cursor-not-allowed">
+                <button disabled className="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-500 dark:text-gray-500 transition duration-150 flex items-center">
+                  Auto-Detect Cipher
+                  <span className="ml-auto text-[10px] uppercase tracking-wider bg-gray-200 dark:bg-gray-800 px-2 py-0.5 rounded-full">Soon</span>
+                </button>
+                <button disabled className="w-full text-left px-4 py-2.5 rounded-lg font-medium text-gray-500 dark:text-gray-500 transition duration-150 flex items-center">
+                  Frequency Analysis
+                  <span className="ml-auto text-[10px] uppercase tracking-wider bg-gray-200 dark:bg-gray-800 px-2 py-0.5 rounded-full">Soon</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </aside>
+
+        {/* Selected Cipher View */}
+        <main className="flex-1 min-w-0">
+          {activeTab === 'caesar' && <CaesarView />}
+          {activeTab === 'vigenere' && <VigenereView />}
+          {activeTab === 'hill' && <HillView />}
+          {activeTab === 'playfair' && <PlayfairView />}
+          {activeTab === 'railfence' && <RailFenceView />}
+          {activeTab === 'columnar' && <ColumnarView />}
         </main>
       </div>
     </div>

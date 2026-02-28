@@ -21,5 +21,6 @@ export default defineConfig({
         command: 'npm run dev -- --force',
         url: 'http://localhost:5173',
         timeout: 120 * 1000,
+        reuseExistingServer: true,
     }
 });
