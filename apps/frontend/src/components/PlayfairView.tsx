@@ -1,4 +1,3 @@
-import React from 'react';
 import { BaseCipherUI } from './BaseCipherUI';
 import { playfairEncrypt, playfairDecrypt } from '@cipherlab/shared';
 import type { PlayfairOptions } from '@cipherlab/shared';

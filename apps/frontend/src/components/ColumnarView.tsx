@@ -1,4 +1,3 @@
-import React from 'react';
 import { BaseCipherUI } from './BaseCipherUI';
 import { ToggleOption } from './ToggleOption';
 import { columnarEncrypt, columnarDecrypt } from '@cipherlab/shared';

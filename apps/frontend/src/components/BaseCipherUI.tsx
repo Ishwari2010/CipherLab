@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { CipherResult } from '@cipherlab/shared';
 
 // API Client for server mode
