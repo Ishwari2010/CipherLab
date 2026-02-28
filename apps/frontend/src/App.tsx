@@ -36,11 +36,11 @@ function App() {
       </header>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 w-full overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 w-full overflow-hidden">
 
         {/* Left Sidebar */}
-        <aside className="w-60 flex-shrink-0 h-full border-r border-purple-100 bg-white/70 backdrop-blur-md overflow-y-auto">
-          <div className="p-6 space-y-8 min-h-full">
+        <aside className="w-full lg:w-80 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-purple-100 bg-white/70 backdrop-blur-md overflow-y-auto">
+          <div className="p-6 space-y-8">
             <div>
               <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-purple-400 ml-2">Available Ciphers</h2>
               <nav className="space-y-1">
@@ -64,7 +64,7 @@ function App() {
         </aside>
 
         {/* Selected Cipher View */}
-        <main className="flex-1 overflow-y-auto p-5">
+        <main className="w-full flex-1 overflow-y-auto p-4 sm:p-5">
           {activeTab === 'caesar' && <CaesarView />}
           {activeTab === 'vigenere' && <VigenereView />}
           {activeTab === 'hill' && <HillView />}

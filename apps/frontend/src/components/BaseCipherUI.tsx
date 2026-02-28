@@ -100,7 +100,7 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
     };
 
     return (
-        <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl border border-purple-100 p-5">
+        <div className="w-full bg-white shadow-lg rounded-2xl border border-purple-100 p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-3 pb-3 border-b border-purple-50">
                 <h2 className="text-2xl font-semibold text-purple-800 tracking-tight">{name}</h2>
             </div>
