@@ -1,0 +1,65 @@
+import React from 'react';
+import { BaseCipherUI } from './BaseCipherUI';
+import { railFenceEncrypt, railFenceDecrypt, RailFenceOptions } from '@cipherlab/shared';
+
+export function RailFenceView() {
+    return (
+        <BaseCipherUI
+            cipherId="railfence"
+            name="Rail Fence Cipher"
+            defaultOptions={{ rails: 3, offset: 0 }}
+            clientEncrypt={(pt, opts) => railFenceEncrypt(pt, opts as RailFenceOptions)}
+            clientDecrypt={(ct, opts) => railFenceDecrypt(ct, opts as RailFenceOptions)}
+            renderOptions={(options, setOptions) => (
+                <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6">
+                    <div>
+                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Rails</label>
+                        <input
+                            type="number"
+                            min="2" max="20"
+                            value={options.rails}
+                            onChange={e => setOptions({ ...options, rails: parseInt(e.target.value) || 2 })}
+                            className="w-24 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Offset</label>
+                        <input
+                            type="number"
+                            min="0"
+                            value={options.offset}
+                            onChange={e => setOptions({ ...options, offset: parseInt(e.target.value) || 0 })}
+                            className="w-24 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+                        />
+                    </div>
+                </div>
+            )}
+            renderVisualization={(result) => {
+                const grid = result.meta?.grid;
+                if (!grid) return null;
+
+                return (
+                    <div className="mt-4 p-4 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-x-auto">
+                        <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Rail Fence Zig-Zag Grid</h4>
+                        <div className="flex flex-col gap-1 font-mono text-blue-600 dark:text-blue-400 font-bold whitespace-pre">
+                            {grid.map((row: string[], r: number) => {
+                                let disp = '';
+                                let charIdx = 0;
+                                for (let i = 0; i < (result.plaintext?.length || result.ciphertext?.length || 0); i++) {
+                                    const eff = (i + (result.meta.offset || 0)) % (2 * result.meta.rails - 2);
+                                    const belongsToRow = eff < result.meta.rails ? eff : (2 * result.meta.rails - 2) - eff;
+                                    if (belongsToRow === r) {
+                                        disp += row[charIdx++] || ' ';
+                                    } else {
+                                        disp += ' ';
+                                    }
+                                }
+                                return <div key={r}>{disp}</div>;
+                            })}
+                        </div>
+                    </div>
+                );
+            }}
+        />
+    );
+}
