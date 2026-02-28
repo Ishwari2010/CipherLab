@@ -15,7 +15,7 @@ test('has title and can encrypt basic caesar', async ({ page }) => {
     await page.click('text=Encrypt');
 
     // Check the result
-    const result = page.locator('div.font-mono.text-lg').first();
+    const result = page.getByTestId('cipher-output');
     await expect(result).toBeVisible();
 
     // For 'HELLO E2E TEST' shifted by 3 with preserve case:
