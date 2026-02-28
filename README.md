@@ -57,3 +57,5 @@ This project is structured as an npm monorepo (workspaces):
 
 - **No Persistence**: Plaintexts, ciphertexts, and keys are NEVER stored by the backend. They exist only in memory during the request cycle.
 - **Client-side Execution**: The app includes a "Local Mode" toggle. When checked, the cryptographic logic (from `@cipherlab/shared`) runs completely within the browser. No API requests are made, ensuring ultimate privacy for sensitive plaintexts.
+- **Forced Privacy Mode**: You can force the application to never make API requests by setting `VITE_LOCAL_ONLY=true` in the frontend `.env`. This hides the toggle and enforces 100% local processing.
+- **Health Check**: The API includes a `GET /health` endpoint that returns a 200 OK status to verify availability without processing data.

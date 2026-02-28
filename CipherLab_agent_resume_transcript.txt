@@ -1,0 +1,17 @@
+# CipherLab Agent Resume Transcript
+
+1. Initially listed workspace directory to confirm Monorepo setup.
+2. Ran `npm run test --workspaces`. Found all shared packages pass unit tests successfully.
+3. Ran integration tests for backend, ensuring API routes match the contract. Tests passed.
+4. Ran Playwright tests but encountered an error regarding missing browsers.
+5. Visually verified `hill.ts` and `matrix.ts` implementation:
+   - Validated GCD implementation and Modulo logic.
+   - Ran `npx tsx test-hill.ts` to log specific Hill cipher test vectors. Both resulted in expected strings/errors.
+6. Checked `app.ts` in the Express backend: `helmet`, `cors`, and `express-rate-limit` configurations were present and correct.
+7. Evaluated privacy configurations. Updated `BaseCipherUI.tsx` to handle an environment variable `VITE_LOCAL_ONLY` to force completely stateless local processing. Included `.env` file in `apps/frontend/`.
+8. Checked `docker-compose.yml` for port alignments and documented them in `README.md`. Docker runtime was absent on Windows host.
+9. Reviewed GitHub Actions YAML. Switched `npm audit` to output JSON per user request.
+10. Built `CipherLab_resume_snapshot.zip` in Windows staging `C:\tmp`.
+11. Initialized git repository locally and pushed changes to the `resume/fixes-2026-02-28` branch representing the PR draft.
+
+Session Completed Successfully.
