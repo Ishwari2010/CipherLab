@@ -1,7 +1,7 @@
 
 import { BaseCipherUI } from './BaseCipherUI';
-import { hillEncrypt, hillDecrypt } from '@cipherlab/shared';
-import type { HillOptions } from '@cipherlab/shared';
+import { hillEncrypt, hillDecrypt } from '@cryptiq/shared';
+import type { HillOptions } from '@cryptiq/shared';
 
 export function HillView() {
     const defaultMatrix = [[3, 3], [2, 5]];

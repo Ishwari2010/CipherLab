@@ -1,6 +1,6 @@
-# CipherLab User Guide
+# Cryptiq User Guide
 
-Welcome to CipherLab! This toolkit allows you to explore classical ciphers in an educational and interactive way.
+Welcome to Cryptiq! This toolkit allows you to explore classical ciphers in an educational and interactive way.
 
 ## Features
 

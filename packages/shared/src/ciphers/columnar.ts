@@ -1,4 +1,4 @@
-import { CipherResult } from '../types';
+import { CipherResult, Step } from '../types';
 
 export interface ColumnarOptions {
     keyword: string;
@@ -20,12 +20,16 @@ function getColumnOrder(keyword: string): number[] {
     return chars.map(c => c.originalIndex);
 }
 
-function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: string = 'X', steps: string[]): { ciphertext: string, grid: string[][] } {
+function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: string = 'X', steps: Step[], stepNumber: { current: number }): { ciphertext: string, grid: string[][] } {
     const numCols = keyword.length;
     if (numCols === 0) return { ciphertext: plaintext, grid: [] };
 
     const order = getColumnOrder(keyword);
-    steps.push(`Keyword "${keyword}" establishes column reading order: ${order.join(', ')}`);
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Determine Column Order',
+        explanation: `Keyword "${keyword}" establishes column reading order: ${order.join(', ')}`
+    });
 
     let text = plaintext;
     const remainder = text.length % numCols;
@@ -33,7 +37,11 @@ function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: s
         const padCount = numCols - remainder;
         const actualFiller = fillerChar || 'X';
         text += actualFiller.repeat(padCount);
-        steps.push(`Padded with ${padCount} filler characters '${actualFiller}'.`);
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: 'Padding',
+            explanation: `Padded with ${padCount} filler character(s) '${actualFiller}' to complete the grid. Text is now: "${text}"`
+        });
     }
 
     const numRows = Math.ceil(text.length / numCols);
@@ -45,6 +53,12 @@ function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: s
         grid[r][c] = text[i];
     }
 
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Grid Creation',
+        explanation: `Filled the grid row by row:\n${grid.map(row => row.join(' ')).join('\n')}`
+    });
+
     let ciphertext = '';
     // Read downwards according to `order`
     for (const colIndex of order) {
@@ -53,16 +67,27 @@ function columnarEncryptSingle(plaintext: string, keyword: string, fillerChar: s
             if (grid[r][colIndex]) colText += grid[r][colIndex];
         }
         ciphertext += colText;
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: `Reading Column ${colIndex + 1}`,
+            explanation: `Reading downwards from column ${colIndex + 1} (character '${keyword[colIndex]}'): "${colText}"`
+        });
     }
 
     return { ciphertext, grid };
 }
 
-function columnarDecryptSingle(ciphertext: string, keyword: string, steps: string[]): string {
+function columnarDecryptSingle(ciphertext: string, keyword: string, steps: Step[], stepNumber: { current: number }): string {
     const numCols = keyword.length;
     if (numCols === 0) return ciphertext;
 
     const order = getColumnOrder(keyword);
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Determine Column Order',
+        explanation: `Keyword "${keyword}" establishes column order for filling: ${order.join(', ')}`
+    });
+
     const numRows = Math.ceil(ciphertext.length / numCols);
 
     // Notice that if the grid is incomplete (no filler), some columns are shorter.
@@ -87,7 +112,18 @@ function columnarDecryptSingle(ciphertext: string, keyword: string, steps: strin
         for (let r = 0; r < len; r++) {
             grid[r][colIndex] = ciphertext[currentIndex++];
         }
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: `Filling Column ${colIndex + 1}`,
+            explanation: `Extracted ${len} characters and filled column ${colIndex + 1} downwards.`
+        });
     }
+
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Reconstructed Grid',
+        explanation: `The completely reconstructed grid is:\n${grid.map(row => row.join(' ')).join('\n')}`
+    });
 
     // Read horizontally to get plaintext
     let plaintext = '';
@@ -97,20 +133,37 @@ function columnarDecryptSingle(ciphertext: string, keyword: string, steps: strin
         }
     }
 
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Reading Rows',
+        explanation: `Reading the horizontal rows reconstructs the text: "${plaintext}"`
+    });
+
     return plaintext;
 }
 
 export function columnarEncrypt(plaintext: string, options: ColumnarOptions): CipherResult {
     const { keyword, doubleTransposition = false, fillerChar = 'X' } = options;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = { current: 1 };
 
-    let { ciphertext, grid } = columnarEncryptSingle(plaintext, keyword, fillerChar, steps);
+    let { ciphertext, grid } = columnarEncryptSingle(plaintext, keyword, fillerChar, steps, stepNumber);
 
     if (doubleTransposition) {
-        steps.push('Performing Double Transposition (second pass).');
-        const result2 = columnarEncryptSingle(ciphertext, keyword, fillerChar, steps);
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: 'Double Transposition Start',
+            explanation: 'Performing Double Transposition: running the output through the cipher a second time.'
+        });
+        const result2 = columnarEncryptSingle(ciphertext, keyword, fillerChar, steps, stepNumber);
         ciphertext = result2.ciphertext;
     }
+
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Final Result',
+        explanation: `Final ciphertext: "${ciphertext}"`
+    });
 
     return {
         plaintext,
@@ -122,17 +175,38 @@ export function columnarEncrypt(plaintext: string, options: ColumnarOptions): Ci
 
 export function columnarDecrypt(ciphertext: string, options: ColumnarOptions): CipherResult {
     const { keyword, doubleTransposition = false } = options;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = { current: 1 };
 
     let plaintext = ciphertext;
 
     if (doubleTransposition) {
-        steps.push('Performing reverse of second transposition.');
-        plaintext = columnarDecryptSingle(plaintext, keyword, steps);
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: 'Double Transposition Start',
+            explanation: 'Performing reverse of second transposition first.'
+        });
+        plaintext = columnarDecryptSingle(plaintext, keyword, steps, stepNumber);
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: 'Second Reverse',
+            explanation: 'Performing reverse of first transposition.'
+        });
+    } else {
+        steps.push({
+            stepNumber: stepNumber.current++,
+            title: 'Reverse Transposition Start',
+            explanation: 'Performing reverse transposition on the grid.'
+        });
     }
 
-    steps.push(doubleTransposition ? 'Performing reverse of first transposition.' : 'Performing reverse transposition.');
-    plaintext = columnarDecryptSingle(plaintext, keyword, steps);
+    plaintext = columnarDecryptSingle(plaintext, keyword, steps, stepNumber);
+
+    steps.push({
+        stepNumber: stepNumber.current++,
+        title: 'Final Result',
+        explanation: `Final plaintext: "${plaintext}"`
+    });
 
     return {
         plaintext,

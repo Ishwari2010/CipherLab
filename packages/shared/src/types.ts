@@ -1,6 +1,12 @@
+export interface Step {
+    stepNumber: number;
+    title: string;
+    explanation: string;
+}
+
 export interface CipherResult {
     ciphertext: string;
     plaintext: string;
-    steps: string[];
+    steps: Step[];
     meta?: any;
 }

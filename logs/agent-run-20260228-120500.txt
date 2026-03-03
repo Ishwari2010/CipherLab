@@ -1,12 +1,12 @@
-# CipherLab Agent Run Logs
+﻿# Cryptiq Agent Run Logs
 Date: 2026-02-28 12:05:00
 
 ## 1. Playwright E2E Tests
-Command: `npx playwright test` after updating `e2e.spec.ts` selector to `getByText(/CipherLab/i)` and removing explicit `h1` lookup.
+Command: `npx playwright test` after updating `e2e.spec.ts` selector to `getByText(/Cryptiq/i)` and removing explicit `h1` lookup.
 Result:
 ```text
 Running 1 test using 1 worker
-[chromium] › tests\e2e.spec.ts:3:1 › has title and can encrypt basic caesar
+[chromium] â€º tests\e2e.spec.ts:3:1 â€º has title and can encrypt basic caesar
   1 passed (3.7s)
 ```
 Pass/Fail: PASS.
@@ -25,6 +25,6 @@ Result: `{"status":"ok","time":"..."}`
 Pass/Fail: PASS. README updated.
 
 ## 5. Artifacts and Finalize
-Snapshot: Zip created successfully at `C:\tmp\CipherLab_resume_snapshot.zip`.
+Snapshot: Zip created successfully at `C:\tmp\Cryptiq_resume_snapshot.zip`.
 Git: Committed Playwright fix. 
-PR: Open draft PR `resume/fixes-2026-02-28 — validation & privacy-mode fixes` against `main` (Drafted locally pending remote fetch).
+PR: Open draft PR `resume/fixes-2026-02-28 â€” validation & privacy-mode fixes` against `main` (Drafted locally pending remote fetch).

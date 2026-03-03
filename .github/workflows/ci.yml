@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         run: npm run lint --workspaces --if-present
 
       - name: Build Shared
-        run: npm run build -w @cipherlab/shared
+        run: npm run build -w @cryptiq/shared
 
       - name: Build All
         run: npm run build --workspaces --if-present

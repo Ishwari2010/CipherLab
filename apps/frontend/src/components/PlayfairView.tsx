@@ -1,6 +1,6 @@
 import { BaseCipherUI } from './BaseCipherUI';
-import { playfairEncrypt, playfairDecrypt } from '@cipherlab/shared';
-import type { PlayfairOptions } from '@cipherlab/shared';
+import { playfairEncrypt, playfairDecrypt } from '@cryptiq/shared';
+import type { PlayfairOptions } from '@cryptiq/shared';
 
 export function PlayfairView() {
     return (

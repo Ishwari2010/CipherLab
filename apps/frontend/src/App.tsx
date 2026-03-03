@@ -12,7 +12,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<CipherTab>('caesar');
   const tabs: { id: CipherTab, label: string }[] = [
     { id: 'caesar', label: 'Caesar Cipher' },
-    { id: 'vigenere', label: 'Vigenère Cipher' },
+    { id: 'vigenere', label: 'VigenÃ¨re Cipher' },
     { id: 'hill', label: 'Hill Cipher' },
     { id: 'playfair', label: 'Playfair Cipher' },
     { id: 'railfence', label: 'Rail Fence Cipher' },
@@ -28,7 +28,7 @@ function App() {
           <div className="flex items-center space-x-3">
             <div>
               <h1 className="text-xl font-bold tracking-tight text-purple-800">
-                CipherLab
+                Cryptiq
               </h1>
             </div>
           </div>

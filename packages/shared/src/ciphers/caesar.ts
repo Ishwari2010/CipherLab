@@ -1,4 +1,4 @@
-import { CipherResult } from '../types';
+import { CipherResult, Step } from '../types';
 
 export interface CaesarOptions {
     shift: number;
@@ -9,38 +9,78 @@ export interface CaesarOptions {
 export function caesarEncrypt(plaintext: string, options: CaesarOptions): CipherResult {
     const { shift, preserveCase = true, stripPunctuation = false } = options;
     let text = plaintext;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
+
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Original Input',
+        explanation: `Original text: "${plaintext}"`
+    });
 
     if (stripPunctuation) {
         text = text.replace(/[^A-Za-z]/g, '');
-        steps.push('Stripped punctation/spaces from input.');
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Strip Punctuation',
+            explanation: `Stripped punctuation/spaces from input: "${text}"`
+        });
     }
 
     if (!preserveCase) {
         text = text.toUpperCase();
-        steps.push('Converted input to uppercase.');
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Convert Case',
+            explanation: `Converted input to uppercase: "${text}"`
+        });
     }
 
     const normalizedShift = ((shift % 26) + 26) % 26;
-    steps.push(`Using effective shift of ${normalizedShift}.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Shift Value',
+        explanation: `Using shift value of ${normalizedShift}.`
+    });
 
     let ciphertext = '';
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
         if (/[A-Z]/.test(char)) {
             const code = char.charCodeAt(0) - 65;
-            const newChar = String.fromCharCode(((code + normalizedShift) % 26) + 65);
+            const newCode = (code + normalizedShift) % 26;
+            const newChar = String.fromCharCode(newCode + 65);
             ciphertext += newChar;
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Transforming '${char}'`,
+                explanation: `Original letter: '${char}'\nAlphabet index: ${code} (A=0, B=1, ...)\nFormula used: (${code} + ${normalizedShift}) % 26 = ${newCode}\nNew index: ${newCode}\nResulting letter: '${newChar}'`
+            });
         } else if (/[a-z]/.test(char)) {
             const code = char.charCodeAt(0) - 97;
-            const newChar = String.fromCharCode(((code + normalizedShift) % 26) + 97);
+            const newCode = (code + normalizedShift) % 26;
+            const newChar = String.fromCharCode(newCode + 97);
             ciphertext += newChar;
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Transforming '${char}'`,
+                explanation: `Original letter: '${char}'\nAlphabet index: ${code} (a=0, b=1, ...)\nFormula used: (${code} + ${normalizedShift}) % 26 = ${newCode}\nNew index: ${newCode}\nResulting letter: '${newChar}'`
+            });
         } else {
             ciphertext += char;
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Skipping '${char}'`,
+                explanation: `Character '${char}' is not alphabetic, so it remains unchanged.`
+            });
         }
     }
 
-    steps.push('Shifted each alphabetic character.');
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final output: "${ciphertext}"`
+    });
 
     return {
         plaintext,
@@ -59,7 +99,14 @@ export function caesarDecrypt(ciphertext: string, options: CaesarOptions): Ciphe
     return {
         plaintext: result.ciphertext,
         ciphertext: ciphertext,
-        steps: ['To decrypt, we shift in the opposite direction.', ...result.steps],
+        steps: [
+            {
+                stepNumber: 1,
+                title: 'Decryption Setup',
+                explanation: `To decrypt, we reverse the shift direction using an opposite shift value.`
+            },
+            ...result.steps.map(s => ({ ...s, stepNumber: s.stepNumber + 1 }))
+        ],
         meta: { shift: options.shift }
     };
 }

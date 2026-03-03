@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+﻿FROM node:18-alpine AS builder
 
 WORKDIR /app
 # Copy root setup
@@ -14,8 +14,8 @@ COPY packages/shared packages/shared
 COPY apps/frontend apps/frontend
 
 # Build shared first, then frontend
-RUN npm run build -w @cipherlab/shared
-RUN npm run build -w @cipherlab/frontend
+RUN npm run build -w @cryptiq/shared
+RUN npm run build -w @cryptiq/frontend
 
 # Serve using nginx
 FROM nginx:alpine

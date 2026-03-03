@@ -1,5 +1,5 @@
 {
-  "name": "cipherlab",
+  "name": "cryptiq",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace=@cipherlab/shared && npm run build --workspace=@cipherlab/frontend",
+    "build": "npm run build --workspace=@cryptiq/shared && npm run build --workspace=@cryptiq/frontend",
     "dev": "npm run dev --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present"

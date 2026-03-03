@@ -1,7 +1,7 @@
 
 import { BaseCipherUI } from './BaseCipherUI';
-import { railFenceEncrypt, railFenceDecrypt } from '@cipherlab/shared';
-import type { RailFenceOptions } from '@cipherlab/shared';
+import { railFenceEncrypt, railFenceDecrypt } from '@cryptiq/shared';
+import type { RailFenceOptions } from '@cryptiq/shared';
 
 export function RailFenceView() {
     return (

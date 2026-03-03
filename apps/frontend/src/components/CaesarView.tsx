@@ -1,7 +1,7 @@
 import { BaseCipherUI } from './BaseCipherUI';
 import { ToggleOption } from './ToggleOption';
-import { caesarEncrypt, caesarDecrypt } from '@cipherlab/shared';
-import type { CaesarOptions } from '@cipherlab/shared';
+import { caesarEncrypt, caesarDecrypt } from '@cryptiq/shared';
+import type { CaesarOptions } from '@cryptiq/shared';
 
 export function CaesarView() {
     return (

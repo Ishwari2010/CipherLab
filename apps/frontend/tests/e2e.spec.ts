@@ -6,7 +6,7 @@ test('has title and can encrypt basic caesar', async ({ page }) => {
     await page.goto('/');
 
     // Expect a title "to contain" a substring.
-    await expect(page.getByText(/CipherLab/i)).toBeVisible();
+    await expect(page.getByText(/Cryptiq/i)).toBeVisible();
 
     // Fill in textarea
     await page.fill('textarea', 'HELLO EEE TEST');

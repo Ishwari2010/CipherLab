@@ -1,4 +1,4 @@
-import { CipherResult } from '../types';
+import { CipherResult, Step } from '../types';
 
 export interface VigenereOptions {
     key: string;
@@ -10,22 +10,43 @@ export interface VigenereOptions {
 export function vigenereEncrypt(plaintext: string, options: VigenereOptions): CipherResult {
     const { key, variant = 'classic', preserveCase = true, stripPunctuation = false } = options;
     let text = plaintext;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     const cleanKey = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (cleanKey.length === 0) {
         throw new Error('Vigenère key must contain at least one letter.');
     }
 
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Original Input',
+        explanation: `Original text: "${plaintext}"\nInitial Key: "${cleanKey}"`
+    });
+
     if (stripPunctuation) {
         text = text.replace(/[^A-Za-z]/g, '');
-        steps.push('Stripped punctuation and spaces from input.');
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Strip Punctuation',
+            explanation: `Stripped punctuation and spaces from input: "${text}"`
+        });
     }
 
     if (!preserveCase) {
         text = text.toUpperCase();
-        steps.push('Converted input to uppercase.');
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Convert Case',
+            explanation: `Converted input to uppercase: "${text}"`
+        });
     }
+
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Protocol Info',
+        explanation: `Using ${variant === 'autokey' ? 'Autokey' : 'Classic'} Vigenère protocol.`
+    });
 
     let ciphertext = '';
     let keyIndex = 0;
@@ -37,27 +58,43 @@ export function vigenereEncrypt(plaintext: string, options: VigenereOptions): Ci
             const isUpper = char === char.toUpperCase();
             const base = isUpper ? 65 : 97;
             const ptCode = char.charCodeAt(0) - base;
-            const shift = keystream[keyIndex].charCodeAt(0) - 65;
+
+            const currentKeyChar = keystream[keyIndex];
+            const shift = currentKeyChar.charCodeAt(0) - 65;
 
             const newCode = (ptCode + shift) % 26;
-            ciphertext += String.fromCharCode(newCode + base);
+            const newChar = String.fromCharCode(newCode + base);
+            ciphertext += newChar;
+
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Transforming '${char}'`,
+                explanation: `Plaintext letter: '${char}' (value: ${ptCode})\nKey letter: '${currentKeyChar}' (value: ${shift})\nApply formula: (${ptCode} + ${shift}) % 26 = ${newCode}\nResulting letter: '${newChar}'`
+            });
 
             if (variant === 'autokey') {
-                // Append the *plaintext* character's uppercase version to the keystream
                 keystream += String.fromCharCode(ptCode + 65);
             } else {
-                // Classic repeating key
                 if (keyIndex === keystream.length - 1) {
-                    keystream += keystream; // Extend the keystream dynamically
+                    keystream += keystream;
                 }
             }
             keyIndex++;
         } else {
             ciphertext += char;
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Skipping '${char}'`,
+                explanation: `Character '${char}' is not alphabetic, so it remains unchanged.`
+            });
         }
     }
 
-    steps.push(`Encrypted using ${variant === 'autokey' ? 'Autokey' : 'Classic'} Vigenère protocol.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final output: "${ciphertext}"`
+    });
 
     return {
         plaintext,
@@ -70,20 +107,43 @@ export function vigenereEncrypt(plaintext: string, options: VigenereOptions): Ci
 export function vigenereDecrypt(ciphertext: string, options: VigenereOptions): CipherResult {
     const { key, variant = 'classic', preserveCase = true, stripPunctuation = false } = options;
     let text = ciphertext;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     const cleanKey = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (cleanKey.length === 0) {
         throw new Error('Vigenère key must contain at least one letter.');
     }
 
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Original Input',
+        explanation: `Original text: "${ciphertext}"\nInitial Key: "${cleanKey}"`
+    });
+
     if (stripPunctuation) {
         text = text.replace(/[^A-Za-z]/g, '');
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Strip Punctuation',
+            explanation: `Stripped punctuation and spaces from input: "${text}"`
+        });
     }
 
     if (!preserveCase) {
         text = text.toUpperCase();
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Convert Case',
+            explanation: `Converted input to uppercase: "${text}"`
+        });
     }
+
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Protocol Info',
+        explanation: `Using ${variant === 'autokey' ? 'Autokey' : 'Classic'} Vigenère protocol.`
+    });
 
     let plaintext = '';
     let keyIndex = 0;
@@ -95,14 +155,21 @@ export function vigenereDecrypt(ciphertext: string, options: VigenereOptions): C
             const isUpper = char === char.toUpperCase();
             const base = isUpper ? 65 : 97;
             const ctCode = char.charCodeAt(0) - base;
-            const shift = keystream[keyIndex].charCodeAt(0) - 65;
+
+            const currentKeyChar = keystream[keyIndex];
+            const shift = currentKeyChar.charCodeAt(0) - 65;
 
             const newCode = (ctCode - shift + 26) % 26;
             const ptChar = String.fromCharCode(newCode + base);
             plaintext += ptChar;
 
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Transforming '${char}'`,
+                explanation: `Ciphertext letter: '${char}' (value: ${ctCode})\nKey letter: '${currentKeyChar}' (value: ${shift})\nApply formula: (${ctCode} - ${shift} + 26) % 26 = ${newCode}\nResulting letter: '${ptChar}'`
+            });
+
             if (variant === 'autokey') {
-                // Append the *recovered plaintext* character to the keystream
                 keystream += String.fromCharCode(newCode + 65);
             } else {
                 if (keyIndex === keystream.length - 1) {
@@ -112,10 +179,19 @@ export function vigenereDecrypt(ciphertext: string, options: VigenereOptions): C
             keyIndex++;
         } else {
             plaintext += char;
+            steps.push({
+                stepNumber: stepNumber++,
+                title: `Skipping '${char}'`,
+                explanation: `Character '${char}' is not alphabetic, so it remains unchanged.`
+            });
         }
     }
 
-    steps.push(`Decrypted using ${variant === 'autokey' ? 'Autokey' : 'Classic'} Vigenère protocol.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final output: "${plaintext}"`
+    });
 
     return {
         plaintext,
@@ -125,7 +201,6 @@ export function vigenereDecrypt(ciphertext: string, options: VigenereOptions): C
     };
 }
 
-// Basic Index of Coincidence (IC) and Kasiski logic will be implemented here or in heuristics
 export function calculateIC(text: string): number {
     const clean = text.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (clean.length < 2) return 0;

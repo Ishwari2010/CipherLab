@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+﻿FROM node:18-alpine AS builder
 
 WORKDIR /app
 # Copy root package details
@@ -15,8 +15,8 @@ COPY packages/shared packages/shared
 COPY apps/backend apps/backend
 
 # Build shared and backend
-RUN npm run build -w @cipherlab/shared
-RUN npm run build -w @cipherlab/backend
+RUN npm run build -w @cryptiq/shared
+RUN npm run build -w @cryptiq/backend
 
 FROM node:18-alpine
 
@@ -32,4 +32,4 @@ COPY --from=builder /app/packages/shared/dist packages/shared/dist
 COPY --from=builder /app/apps/backend/dist apps/backend/dist
 
 EXPOSE 3000
-CMD ["npm", "start", "-w", "@cipherlab/backend"]
+CMD ["npm", "start", "-w", "@cryptiq/backend"]

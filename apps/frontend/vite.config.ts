@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['@cipherlab/shared']
+    include: ['@cryptiq/shared']
   },
   build: {
     commonjsOptions: {

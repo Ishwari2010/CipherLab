@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CipherResult } from '@cipherlab/shared';
+import type { CipherResult } from '@cryptiq/shared';
 
 // API Client for server mode
 async function callApi(endpoint: string, payload: any) {
@@ -179,18 +179,27 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
                     {renderVisualization && renderVisualization(result, lastAction || 'encrypt')}
 
                     {showSteps && (
-                        <div className="p-4 rounded-lg border border-purple-100 bg-white/50">
+                        <div className="p-4 rounded-lg border border-purple-100 bg-white/50 max-h-96 overflow-y-auto">
                             <h3 className="text-sm font-semibold mb-3 text-purple-800">
                                 Execution Trace
                             </h3>
-                            <ul className="space-y-1.5">
+                            <div className="space-y-3">
                                 {result.steps.map((step, i) => (
-                                    <li key={i} className="flex text-sm text-gray-600 font-mono">
-                                        <span className="text-purple-300 min-w-[2rem] font-medium">{(i + 1).toString().padStart(2, '0')}</span>
-                                        <span>{step}</span>
-                                    </li>
+                                    <div key={i} className="p-3 bg-white rounded border border-purple-50 shadow-sm flex flex-col sm:flex-row gap-3">
+                                        <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-600 font-bold text-sm">
+                                            {typeof step === 'string' ? i + 1 : step.stepNumber}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="font-semibold text-purple-900 text-sm mb-1">
+                                                {typeof step === 'string' ? `Step ${i + 1}` : step.title}
+                                            </h4>
+                                            <p className="text-sm text-gray-700 font-mono whitespace-pre-wrap">
+                                                {typeof step === 'string' ? step : step.explanation}
+                                            </p>
+                                        </div>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     )}
                 </div>

@@ -1,7 +1,7 @@
 import { BaseCipherUI } from './BaseCipherUI';
 import { ToggleOption } from './ToggleOption';
-import { columnarEncrypt, columnarDecrypt } from '@cipherlab/shared';
-import type { ColumnarOptions } from '@cipherlab/shared';
+import { columnarEncrypt, columnarDecrypt } from '@cryptiq/shared';
+import type { ColumnarOptions } from '@cryptiq/shared';
 
 export function ColumnarView() {
     return (

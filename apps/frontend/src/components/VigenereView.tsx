@@ -1,13 +1,13 @@
 import { BaseCipherUI } from './BaseCipherUI';
 import { ToggleOption } from './ToggleOption';
-import { vigenereEncrypt, vigenereDecrypt } from '@cipherlab/shared';
-import type { VigenereOptions } from '@cipherlab/shared';
+import { vigenereEncrypt, vigenereDecrypt } from '@cryptiq/shared';
+import type { VigenereOptions } from '@cryptiq/shared';
 
 export function VigenereView() {
     return (
         <BaseCipherUI
             cipherId="vigenere"
-            name="Vigenère Cipher"
+            name="VigenÃ¨re Cipher"
             defaultOptions={{ key: 'LEMON', variant: 'classic', preserveCase: true, stripPunctuation: false }}
             clientEncrypt={(pt, opts) => vigenereEncrypt(pt, opts as VigenereOptions)}
             clientDecrypt={(ct, opts) => vigenereDecrypt(ct, opts as VigenereOptions)}

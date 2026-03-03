@@ -1,6 +1,6 @@
-# CipherLab Developer Documentation
+# Cryptiq Developer Documentation
 
-CipherLab is a modern, production-ready web application for encrypting, decrypting, and analyzing classical ciphers. It features a React+Tailwind frontend, an Express API backend, and a shared TypeScript cryptography library.
+Cryptiq is a modern, production-ready web application for encrypting, decrypting, and analyzing classical ciphers. It features a React+Tailwind frontend, an Express API backend, and a shared TypeScript cryptography library.
 
 ## Architecture
 
@@ -28,7 +28,7 @@ This project is structured as an npm monorepo (workspaces):
 2. **Build Shared Library**
    The backend and frontend depend on the shared library being built at least once:
    ```bash
-   npm run build -w @cipherlab/shared
+   npm run build -w @cryptiq/shared
    ```
 
 3. **Start Development Servers (Nodemon + Vite)**
@@ -56,6 +56,6 @@ This project is structured as an npm monorepo (workspaces):
 ## Privacy & Security
 
 - **No Persistence**: Plaintexts, ciphertexts, and keys are NEVER stored by the backend. They exist only in memory during the request cycle.
-- **Client-side Execution**: The app includes a "Local Mode" toggle. When checked, the cryptographic logic (from `@cipherlab/shared`) runs completely within the browser. No API requests are made, ensuring ultimate privacy for sensitive plaintexts.
+- **Client-side Execution**: The app includes a "Local Mode" toggle. When checked, the cryptographic logic (from `@cryptiq/shared`) runs completely within the browser. No API requests are made, ensuring ultimate privacy for sensitive plaintexts.
 - **Forced Privacy Mode**: You can force the application to never make API requests by setting `VITE_LOCAL_ONLY=true` in the frontend `.env`. This hides the toggle and enforces 100% local processing.
 - **Health Check**: The API includes a `GET /health` endpoint that returns a 200 OK status to verify availability without processing data.

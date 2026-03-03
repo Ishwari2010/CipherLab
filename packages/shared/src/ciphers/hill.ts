@@ -1,4 +1,4 @@
-import { CipherResult } from '../types';
+import { CipherResult, Step } from '../types';
 import { Matrix, determinant, mod, gcd, invertMatrixMod26, multiplyMatrixAndVectorMod26 } from '../utils/matrix';
 
 export interface HillOptions {
@@ -8,7 +8,8 @@ export interface HillOptions {
 export function hillEncrypt(plaintext: string, options: HillOptions): CipherResult {
     const { keyMatrix } = options;
     const fillerChar = 'X';
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     // Validate matrix
     const n = keyMatrix.length;
@@ -20,14 +21,22 @@ export function hillEncrypt(plaintext: string, options: HillOptions): CipherResu
         throw new Error(`Invalid key: determinant (${det}) is not coprime with 26.`);
     }
 
-    steps.push(`Key matrix is ${n}x${n}. Determinant mod 26 is ${det}, which is valid.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Key Matrix',
+        explanation: `Using validated ${n}x${n} key matrix (determinant ${det} is coprime with 26):\n[${keyMatrix.map(row => '[' + row.join(', ') + ']').join(',\n ')}]`
+    });
 
     // Prepare text
     let text = plaintext.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (text.length % n !== 0) {
         const padCount = n - (text.length % n);
         text += fillerChar.toUpperCase().repeat(padCount);
-        steps.push(`Padded plaintext with ${padCount} '${fillerChar.toUpperCase()}' characters to make length a multiple of ${n}.`);
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Padding Input',
+            explanation: `Padded plaintext with ${padCount} '${fillerChar.toUpperCase()}' character(s) to make length a multiple of ${n}. Adjusted text: "${text}"`
+        });
     }
 
     let ciphertext = '';
@@ -39,12 +48,18 @@ export function hillEncrypt(plaintext: string, options: HillOptions): CipherResu
         const resultChars = resultVector.map(v => String.fromCharCode(v + 65)).join('');
         ciphertext += resultChars;
 
-        if (i === 0) {
-            steps.push(`First block: [${vector.join(', ')}] * Matrix = [${resultVector.join(', ')}] -> ${resultChars}`);
-        }
+        steps.push({
+            stepNumber: stepNumber++,
+            title: `Encrypting Block: "${blockChars}"`,
+            explanation: `1. Convert to numeric vector: [${vector.join(', ')}]\n2. Matrix multiplication and Mod 26 reduction: Matrix * [${vector.join(', ')}] = [${resultVector.join(', ')}] (mod 26)\n3. Convert back to letters: "${resultChars}"`
+        });
     }
 
-    steps.push(`Encrypted all ${text.length / n} blocks.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final concatenated ciphertext: "${ciphertext}"`
+    });
 
     return {
         plaintext,
@@ -56,14 +71,19 @@ export function hillEncrypt(plaintext: string, options: HillOptions): CipherResu
 
 export function hillDecrypt(ciphertext: string, options: HillOptions): CipherResult {
     const { keyMatrix } = options;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     const n = keyMatrix.length;
     // Compute inverse
     let invMatrix: Matrix;
     try {
         invMatrix = invertMatrixMod26(keyMatrix);
-        steps.push(`Calculated inverse matrix successfully.`);
+        steps.push({
+            stepNumber: stepNumber++,
+            title: 'Inverse Key Matrix',
+            explanation: `Calculated inverse matrix successfully:\n[${invMatrix.map(row => '[' + row.join(', ') + ']').join(',\n ')}]`
+        });
     } catch (e: any) {
         throw new Error(`Cannot decrypt: ${e.message}`);
     }
@@ -82,12 +102,18 @@ export function hillDecrypt(ciphertext: string, options: HillOptions): CipherRes
         const resultChars = resultVector.map(v => String.fromCharCode(v + 65)).join('');
         plaintext += resultChars;
 
-        if (i === 0) {
-            steps.push(`First block: [${vector.join(', ')}] * InverseMatrix = [${resultVector.join(', ')}] -> ${resultChars}`);
-        }
+        steps.push({
+            stepNumber: stepNumber++,
+            title: `Decrypting Block: "${blockChars}"`,
+            explanation: `1. Convert to numeric vector: [${vector.join(', ')}]\n2. Inverse matrix multiplication and Mod 26 reduction: InverseMatrix * [${vector.join(', ')}] = [${resultVector.join(', ')}] (mod 26)\n3. Convert back to letters: "${resultChars}"`
+        });
     }
 
-    steps.push(`Decrypted all ${text.length / n} blocks.`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final concatenated plaintext: "${plaintext}"`
+    });
 
     return {
         plaintext,

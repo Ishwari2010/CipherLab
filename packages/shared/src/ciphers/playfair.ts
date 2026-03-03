@@ -1,4 +1,4 @@
-import { CipherResult } from '../types';
+import { CipherResult, Step } from '../types';
 
 export interface PlayfairOptions {
     key: string;
@@ -76,13 +76,22 @@ function processDigraphs(text: string, fillerChar: string): string[] {
 
 export function playfairEncrypt(plaintext: string, options: PlayfairOptions): CipherResult {
     const { key, fillerChar = 'X' } = options;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     const grid = generatePlayfairGrid(key);
-    steps.push(`Generated 5x5 grid using key "${key}" (I/J combined).`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: '5x5 Key Grid',
+        explanation: `Generated 5x5 grid using key "${key}" (I/J combined):\n${grid.map(row => row.join(' ')).join('\n')}`
+    });
 
     const digraphs = processDigraphs(plaintext, fillerChar.toUpperCase());
-    steps.push(`Processed plaintext into digraphs: ${digraphs.join(' ')}`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Digraph Processing',
+        explanation: `Processed plaintext into digraphs: ${digraphs.join(' ')}`
+    });
 
     let ciphertext = '';
     for (const pair of digraphs) {
@@ -90,23 +99,37 @@ export function playfairEncrypt(plaintext: string, options: PlayfairOptions): Ci
         const [r2, c2] = findPosition(grid, pair[1]);
 
         let enc1, enc2;
+        let rule = '';
         if (r1 === r2) {
             // Same row: shift right
             enc1 = grid[r1][(c1 + 1) % 5];
             enc2 = grid[r2][(c2 + 1) % 5];
+            rule = 'Same row: shift right';
         } else if (c1 === c2) {
             // Same column: shift down
             enc1 = grid[(r1 + 1) % 5][c1];
             enc2 = grid[(r2 + 1) % 5][c2];
+            rule = 'Same column: shift down';
         } else {
             // Rectangle: swap columns
             enc1 = grid[r1][c2];
             enc2 = grid[r2][c1];
+            rule = 'Rectangle rule: swap corners';
         }
 
         ciphertext += enc1 + enc2;
-        steps.push(`Encrypted ${pair} -> ${enc1}${enc2}`);
+        steps.push({
+            stepNumber: stepNumber++,
+            title: `Encrypting Pair: ${pair}`,
+            explanation: `Positions: ${pair[0]} at (${r1},${c1}), ${pair[1]} at (${r2},${c2})\nApplied rule: ${rule}\nResulting pair: ${enc1}${enc2}`
+        });
     }
+
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final concatenated ciphertext: "${ciphertext}"`
+    });
 
     return {
         plaintext,
@@ -118,10 +141,15 @@ export function playfairEncrypt(plaintext: string, options: PlayfairOptions): Ci
 
 export function playfairDecrypt(ciphertext: string, options: PlayfairOptions): CipherResult {
     const { key } = options;
-    const steps: string[] = [];
+    const steps: Step[] = [];
+    let stepNumber = 1;
 
     const grid = generatePlayfairGrid(key);
-    steps.push(`Generated 5x5 grid using key "${key}" (I/J combined).`);
+    steps.push({
+        stepNumber: stepNumber++,
+        title: '5x5 Key Grid',
+        explanation: `Generated 5x5 grid using key "${key}" (I/J combined):\n${grid.map(row => row.join(' ')).join('\n')}`
+    });
 
     // Note: assumes ciphertext is already well-formed and valid length
     let cleanText = ciphertext.toUpperCase().replace(/[^A-Z]/g, '').replace(/J/g, 'I');
@@ -140,21 +168,35 @@ export function playfairDecrypt(ciphertext: string, options: PlayfairOptions): C
         const [r2, c2] = findPosition(grid, pair[1]);
 
         let dec1, dec2;
+        let rule = '';
         // Decrypt is shift left or shift up by 1 (+4 mod 5)
         if (r1 === r2) {
             dec1 = grid[r1][(c1 + 4) % 5];
             dec2 = grid[r2][(c2 + 4) % 5];
+            rule = 'Same row: shift left';
         } else if (c1 === c2) {
             dec1 = grid[(r1 + 4) % 5][c1];
             dec2 = grid[(r2 + 4) % 5][c2];
+            rule = 'Same column: shift up';
         } else {
             dec1 = grid[r1][c2];
             dec2 = grid[r2][c1];
+            rule = 'Rectangle rule: swap corners';
         }
 
         plaintext += dec1 + dec2;
-        steps.push(`Decrypted ${pair} -> ${dec1}${dec2}`);
+        steps.push({
+            stepNumber: stepNumber++,
+            title: `Decrypting Pair: ${pair}`,
+            explanation: `Positions: ${pair[0]} at (${r1},${c1}), ${pair[1]} at (${r2},${c2})\nApplied rule: ${rule}\nResulting pair: ${dec1}${dec2}`
+        });
     }
+
+    steps.push({
+        stepNumber: stepNumber++,
+        title: 'Final Result',
+        explanation: `Final concatenated plaintext: "${plaintext}"`
+    });
 
     return {
         plaintext,

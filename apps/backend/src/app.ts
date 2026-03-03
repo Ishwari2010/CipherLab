@@ -8,8 +8,8 @@ import {
     playfairEncrypt, playfairDecrypt,
     railFenceEncrypt, railFenceDecrypt,
     columnarEncrypt, columnarDecrypt
-} from '@cipherlab/shared';
-import { guessCipher } from '@cipherlab/shared/src/utils/heuristics';
+} from '@cryptiq/shared';
+import { guessCipher } from '@cryptiq/shared/src/utils/heuristics';
 
 import rateLimit from 'express-rate-limit';
 
