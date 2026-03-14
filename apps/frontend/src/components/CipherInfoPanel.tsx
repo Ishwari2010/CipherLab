@@ -123,19 +123,19 @@ export const CipherInfoPanel: React.FC<CipherInfoPanelProps> = ({ cipherId }) =>
     if (!details) return null;
 
     return (
-        <div className="w-full mt-6 bg-white shadow-md rounded-2xl border border-purple-100 overflow-hidden">
+        <div className="w-full mt-6 bg-white dark:bg-gray-900 shadow-md rounded-2xl border border-purple-100 dark:border-gray-800 overflow-hidden">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between p-4 sm:p-5 bg-purple-50/50 hover:bg-purple-50 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-400"
+                className="w-full flex items-center justify-between p-4 sm:p-5 bg-purple-50/50 dark:bg-gray-800/50 hover:bg-purple-50 dark:hover:bg-gray-800 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-400"
             >
-                <span className="text-lg font-semibold text-purple-800 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span className="text-lg font-semibold text-purple-800 dark:text-purple-300 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     About this Cipher: {details.name}
                 </span>
                 <svg
-                    className={`w-5 h-5 text-purple-500 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    className={`w-5 h-5 text-purple-500 dark:text-purple-400 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -145,48 +145,48 @@ export const CipherInfoPanel: React.FC<CipherInfoPanelProps> = ({ cipherId }) =>
             </button>
 
             {isOpen && (
-                <div className="p-5 border-t border-purple-100 space-y-6">
+                <div className="p-5 border-t border-purple-100 dark:border-gray-800 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider mb-1">Overview</h4>
-                                <p className="text-gray-700 text-sm leading-relaxed">{details.overview}</p>
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider mb-1">Overview</h4>
+                                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{details.overview}</p>
                             </div>
                             <div className="flex gap-2 items-center">
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider">Type:</h4>
-                                <span className="bg-purple-100 text-purple-800 text-xs px-2.5 py-0.5 rounded-full font-medium">{details.type}</span>
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider ml-4">Security:</h4>
-                                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${details.securityLevel.includes('Moderate') ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider">Type:</h4>
+                                <span className="bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 text-xs px-2.5 py-0.5 rounded-full font-medium">{details.type}</span>
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider ml-4">Security:</h4>
+                                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${details.securityLevel.includes('Moderate') ? 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300' : 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300'
                                     }`}>
                                     {details.securityLevel}
                                 </span>
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider mb-1">Historical Background</h4>
-                                <p className="text-gray-700 text-sm leading-relaxed">{details.history}</p>
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider mb-1">Historical Background</h4>
+                                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{details.history}</p>
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider mb-1">Example</h4>
-                                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 mt-1">
-                                    <p className="text-gray-700 font-mono text-sm whitespace-pre-wrap">{details.example}</p>
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider mb-1">Example</h4>
+                                <div className="bg-gray-50 dark:bg-gray-800/80 p-3 rounded-lg border border-gray-200 dark:border-gray-700 mt-1">
+                                    <p className="text-gray-700 dark:text-gray-300 font-mono text-sm whitespace-pre-wrap">{details.example}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wider mb-1">How It Works</h4>
-                                <div className="bg-purple-50/50 p-4 rounded-lg border border-purple-50">
-                                    <p className="text-gray-700 text-sm whitespace-pre-line leading-relaxed">{details.howItWorks}</p>
+                                <h4 className="text-sm font-bold text-purple-900 dark:text-purple-400 uppercase tracking-wider mb-1">How It Works</h4>
+                                <div className="bg-purple-50/50 dark:bg-gray-800/50 p-4 rounded-lg border border-purple-50 dark:border-gray-700">
+                                    <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-line leading-relaxed">{details.howItWorks}</p>
                                 </div>
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-green-900 uppercase tracking-wider mb-1">Advantages</h4>
-                                <p className="text-gray-700 text-sm leading-relaxed">{details.advantages}</p>
+                                <h4 className="text-sm font-bold text-green-900 dark:text-green-400 uppercase tracking-wider mb-1">Advantages</h4>
+                                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{details.advantages}</p>
                             </div>
                             <div>
-                                <h4 className="text-sm font-bold text-red-900 uppercase tracking-wider mb-1">Limitations / Weaknesses</h4>
-                                <p className="text-gray-700 text-sm leading-relaxed">{details.limitations}</p>
+                                <h4 className="text-sm font-bold text-red-900 dark:text-red-400 uppercase tracking-wider mb-1">Limitations / Weaknesses</h4>
+                                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{details.limitations}</p>
                             </div>
                         </div>
                     </div>
