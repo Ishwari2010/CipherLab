@@ -11,3 +11,9 @@ export { railFenceEncrypt, railFenceDecrypt } from './ciphers/railfence';
 export type { RailFenceOptions } from './ciphers/railfence';
 export { columnarEncrypt, columnarDecrypt } from './ciphers/columnar';
 export type { ColumnarOptions } from './ciphers/columnar';
+
+export { rsaProcess } from './public-key/rsa';
+export type { RSAResult } from './public-key/rsa';
+
+export { diffieHellmanProcess } from './public-key/diffieHellman';
+export type { DiffieHellmanOptions } from './public-key/diffieHellman';

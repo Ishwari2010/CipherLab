@@ -5,18 +5,22 @@ import { HillView } from './components/HillView';
 import { PlayfairView } from './components/PlayfairView';
 import { RailFenceView } from './components/RailFenceView';
 import { ColumnarView } from './components/ColumnarView';
+import { RSAView } from './components/RSAView';
+import { DiffieHellmanView } from './components/DiffieHellmanView';
 
-type CipherTab = 'caesar' | 'vigenere' | 'hill' | 'playfair' | 'railfence' | 'columnar';
+type CipherTab = 'caesar' | 'vigenere' | 'hill' | 'playfair' | 'railfence' | 'columnar' | 'rsa' | 'diffieHellman';
 
 function App() {
   const [activeTab, setActiveTab] = useState<CipherTab>('caesar');
   const tabs: { id: CipherTab, label: string }[] = [
     { id: 'caesar', label: 'Caesar Cipher' },
-    { id: 'vigenere', label: 'Vigenere Cipher' },
+    { id: 'vigenere', label: 'Vigenère Cipher' },
     { id: 'hill', label: 'Hill Cipher' },
     { id: 'playfair', label: 'Playfair Cipher' },
     { id: 'railfence', label: 'Rail Fence Cipher' },
     { id: 'columnar', label: 'Columnar Transposition' },
+    { id: 'rsa', label: 'RSA Algorithm' },
+    { id: 'diffieHellman', label: 'Diffie-Hellman Key Exchange' },
   ];
 
   return (
@@ -39,12 +43,55 @@ function App() {
       <div className="flex flex-col lg:flex-row flex-1 w-full overflow-hidden">
 
         {/* Left Sidebar */}
-        <aside className="w-full lg:w-80 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-purple-100 bg-white/70 backdrop-blur-md overflow-y-auto">
-          <div className="p-6 space-y-8">
-            <div>
-              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-purple-400 ml-2">Available Ciphers</h2>
+        <aside className="w-full lg:w-80 xl:w-96 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-purple-100 bg-white/70 backdrop-blur-md overflow-y-auto">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row lg:flex-col gap-6 lg:gap-8">
+            {/* Substitution Ciphers */}
+            <div className="flex-1">
+              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-purple-400 ml-2">Substitution Ciphers</h2>
               <nav className="space-y-1">
-                {tabs.map(tab => (
+                {tabs.filter(t => ['caesar', 'vigenere', 'hill', 'playfair'].includes(t.id)).map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg font-medium transition duration-150 flex items-center justify-between
+                      ${activeTab === tab.id
+                        ? 'bg-purple-200 text-purple-900'
+                        : 'text-gray-500 hover:bg-purple-50 hover:text-purple-900'
+                      }`}
+                  >
+                    {tab.label}
+                    {activeTab === tab.id && <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>}
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            {/* Transposition Ciphers */}
+            <div className="flex-1">
+              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-purple-400 ml-2">Transposition Ciphers</h2>
+              <nav className="space-y-1">
+                {tabs.filter(t => ['railfence', 'columnar'].includes(t.id)).map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg font-medium transition duration-150 flex items-center justify-between
+                      ${activeTab === tab.id
+                        ? 'bg-purple-200 text-purple-900'
+                        : 'text-gray-500 hover:bg-purple-50 hover:text-purple-900'
+                      }`}
+                  >
+                    {tab.label}
+                    {activeTab === tab.id && <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>}
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            {/* Public Key Cryptography */}
+            <div className="flex-1">
+              <h2 className="text-xs uppercase tracking-wider font-bold mb-3 text-purple-400 ml-2">Public Key Cryptography</h2>
+              <nav className="space-y-1">
+                {tabs.filter(t => ['rsa', 'diffieHellman'].includes(t.id)).map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
@@ -71,6 +118,8 @@ function App() {
           {activeTab === 'playfair' && <PlayfairView />}
           {activeTab === 'railfence' && <RailFenceView />}
           {activeTab === 'columnar' && <ColumnarView />}
+          {activeTab === 'rsa' && <RSAView />}
+          {activeTab === 'diffieHellman' && <DiffieHellmanView />}
         </main>
       </div>
     </div>

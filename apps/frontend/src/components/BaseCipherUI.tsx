@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CipherResult } from '@cryptiq/shared';
+import { CipherInfoPanel } from './CipherInfoPanel';
 
 // API Client for server mode
 async function callApi(endpoint: string, payload: any) {
@@ -220,6 +221,9 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
                     )}
                 </div>
             </div>
+
+            {/* Cipher Info Panel */}
+            <CipherInfoPanel cipherId={cipherId} />
         </div>
     );
 }
