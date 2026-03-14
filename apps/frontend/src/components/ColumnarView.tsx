@@ -11,6 +11,16 @@ export function ColumnarView() {
             defaultOptions={{ keyword: 'CIPHER', doubleTransposition: false, fillerChar: 'X' }}
             clientEncrypt={(pt, opts) => columnarEncrypt(pt, opts as ColumnarOptions)}
             clientDecrypt={(ct, opts) => columnarDecrypt(ct, opts as ColumnarOptions)}
+            validateOptions={(opts) => {
+                const key = opts.key?.replace(/\s+/g, '');
+                if (!key || typeof key !== 'string' || !/^[A-Za-z]+$/.test(key)) {
+                    return "Keyword must contain alphabetic characters only.";
+                }
+                if (key.length <= 1) {
+                    return "Keyword length must be at least 2.";
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => (
                 <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6">
                     <div>

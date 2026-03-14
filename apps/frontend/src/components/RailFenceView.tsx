@@ -11,6 +11,13 @@ export function RailFenceView() {
             defaultOptions={{ rails: 3, offset: 0 }}
             clientEncrypt={(pt, opts) => railFenceEncrypt(pt, opts as RailFenceOptions)}
             clientDecrypt={(ct, opts) => railFenceDecrypt(ct, opts as RailFenceOptions)}
+            validateOptions={(opts) => {
+                const rails = opts.rails;
+                if (!Number.isInteger(rails) || rails < 2) {
+                    return "Number of rails must be at least 2.";
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => (
                 <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6">
                     <div>

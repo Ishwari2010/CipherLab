@@ -1,6 +1,7 @@
 
 import { BaseCipherUI } from './BaseCipherUI';
 import { hillEncrypt, hillDecrypt } from '@cryptiq/shared';
+import { determinant, mod, gcd } from '@cryptiq/shared/src/utils/matrix';
 import type { HillOptions } from '@cryptiq/shared';
 
 export function HillView() {
@@ -13,6 +14,19 @@ export function HillView() {
             defaultOptions={{ keyMatrix: defaultMatrix }}
             clientEncrypt={(pt, opts) => hillEncrypt(pt, opts as HillOptions)}
             clientDecrypt={(ct, opts) => hillDecrypt(ct, opts as HillOptions)}
+            validateOptions={(opts) => {
+                const matrix = opts.keyMatrix as number[][];
+                const n = matrix.length;
+                if (n < 2) return "Matrix must be at least 2x2.";
+                if (!matrix.every(row => row.length === n)) return "Key matrix must be square.";
+
+                // Check determinant for invertibility mod 26
+                const det = mod(determinant(matrix), 26);
+                if (gcd(det, 26) !== 1) {
+                    return `Key matrix is not invertible modulo 26 (Determinant ${det} is not coprime with 26).`;
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => {
                 const matrix = options.keyMatrix as number[][];
                 const n = matrix.length;

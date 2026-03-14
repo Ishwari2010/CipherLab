@@ -11,6 +11,12 @@ export function VigenereView() {
             defaultOptions={{ key: 'LEMON', variant: 'classic', preserveCase: true, stripPunctuation: false }}
             clientEncrypt={(pt, opts) => vigenereEncrypt(pt, opts as VigenereOptions)}
             clientDecrypt={(ct, opts) => vigenereDecrypt(ct, opts as VigenereOptions)}
+            validateOptions={(opts) => {
+                if (!opts.key || typeof opts.key !== 'string' || !/^[A-Za-z]+$/.test(opts.key)) {
+                    return "Key must contain alphabetic characters only.";
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => (
                 <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-8">
                     <div>

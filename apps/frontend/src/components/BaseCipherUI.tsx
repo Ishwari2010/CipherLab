@@ -21,10 +21,11 @@ export interface CipherUIProps {
     defaultOptions: any;
     clientEncrypt: (pt: string, opts: any) => CipherResult;
     clientDecrypt: (ct: string, opts: any) => CipherResult;
+    validateOptions?: (opts: any, isDecrypt?: boolean) => string | null;
     renderVisualization?: (result: CipherResult, mode: 'encrypt' | 'decrypt') => React.ReactNode;
 }
 
-export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, clientEncrypt, clientDecrypt, renderVisualization }: CipherUIProps) {
+export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, clientEncrypt, clientDecrypt, validateOptions, renderVisualization }: CipherUIProps) {
     const [inputText, setInputText] = useState('');
     const [validationError, setValidationError] = useState<string | null>(null);
     const [options, setOptions] = useState(defaultOptions);
@@ -46,8 +47,14 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
         setIsInputModified(true);
         if (value.trim() === '') {
             setValidationError(null);
-        } else if (!/^[A-Za-z\s]*$/.test(value)) {
-            setValidationError("Only alphabetic characters are allowed for classical ciphers.");
+        } else if (cipherId !== 'columnar' && cipherId !== 'railfence') {
+            if (!/^[A-Za-z\s]*$/.test(value)) {
+                // We'll warn on non-alphabetic, but decryption might legally have some depending on cipher.
+                // We'll keep it simple: if it's not alphabetic, and we are not a transposition cipher, show warning.
+                setValidationError("⚠ Plaintext should generally contain alphabetic characters.");
+            } else {
+                setValidationError(null);
+            }
         } else {
             setValidationError(null);
         }
@@ -69,6 +76,15 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
         }
         if (validationError && isInputModified) {
             return;
+        }
+
+        // Run custom options validation if provided
+        if (validateOptions) {
+            const optionsError = validateOptions(options, action === 'decrypt');
+            if (optionsError) {
+                setValidationError(`⚠ ${optionsError}`);
+                return;
+            }
         }
 
         setError(null);
@@ -119,6 +135,17 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const handleReset = () => {
+        setInputText('');
+        setOutputText('');
+        setResult(null);
+        setError(null);
+        setValidationError(null);
+        setIsInputModified(false);
+        setLastAction(null);
+        setOptions(defaultOptions);
+    };
+
     return (
         <div className="w-full bg-white dark:bg-gray-900 shadow-lg rounded-2xl border border-purple-100 dark:border-gray-800 p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-5 pb-3 border-b border-purple-50 dark:border-gray-800">
@@ -166,8 +193,8 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
                                         <button
                                             onClick={handleCopy}
                                             className={`text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${copied
-                                                    ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800'
-                                                    : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50/50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-100 dark:border-blue-800'
+                                                ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800'
+                                                : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50/50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-100 dark:border-blue-800'
                                                 }`}
                                         >
                                             {copied ? 'Copied ✓' : 'Copy Result'}
@@ -198,14 +225,22 @@ export function BaseCipherUI({ cipherId, name, renderOptions, defaultOptions, cl
                         <button
                             onClick={() => handleAction('encrypt')}
                             className={`flex-1 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white rounded-lg font-medium transition-all shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-900 ${(inputText.trim() === '' || !!validationError) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={inputText.trim() === '' || !!validationError}
                         >
                             Encrypt
                         </button>
                         <button
                             onClick={() => handleAction('decrypt')}
                             className={`flex-1 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-all shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 ${(inputText.trim() === '' || !!validationError) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={inputText.trim() === '' || !!validationError}
                         >
                             Decrypt
+                        </button>
+                        <button
+                            onClick={handleReset}
+                            className="flex-none px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-all shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 dark:focus:ring-offset-gray-900 border border-gray-200 dark:border-gray-700"
+                        >
+                            Reset
                         </button>
                     </div>
                 </div>

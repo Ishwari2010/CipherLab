@@ -10,6 +10,17 @@ export function PlayfairView() {
             defaultOptions={{ key: 'PLAYFAIR', fillerChar: 'X' }}
             clientEncrypt={(pt, opts) => playfairEncrypt(pt, opts as PlayfairOptions)}
             clientDecrypt={(ct, opts) => playfairDecrypt(ct, opts as PlayfairOptions)}
+            validateOptions={(opts) => {
+                const key = opts.key.replace(/\s+/g, '');
+                if (!key || typeof key !== 'string' || !/^[A-Za-z]+$/.test(key)) {
+                    return "Playfair keyword accepts alphabetic characters only.";
+                }
+                const filler = opts.fillerChar;
+                if (!filler || typeof filler !== 'string' || !/^[A-Za-z]+$/.test(filler)) {
+                    return "Filler character must be a single alphabetic letter.";
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => (
                 <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6">
                     <div>

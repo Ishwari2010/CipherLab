@@ -11,6 +11,13 @@ export function CaesarView() {
             defaultOptions={{ shift: 3, preserveCase: true, stripPunctuation: false }}
             clientEncrypt={(pt, opts) => caesarEncrypt(pt, opts as CaesarOptions)}
             clientDecrypt={(ct, opts) => caesarDecrypt(ct, opts as CaesarOptions)}
+            validateOptions={(opts) => {
+                const shift = opts.shift;
+                if (!Number.isInteger(shift) || shift < 1 || shift > 25) {
+                    return "Shift must be a number between 1 and 25.";
+                }
+                return null;
+            }}
             renderOptions={(options, setOptions) => (
                 <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-8">
                     <div>
